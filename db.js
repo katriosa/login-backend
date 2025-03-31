@@ -6,7 +6,7 @@ db.pragma("journal_mode = WAL");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,
+    id TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL
   )
