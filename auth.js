@@ -3,10 +3,10 @@ import db from "./db.js";
 import jwt from "jsonwebtoken";
 
 const secretKey = process.env.JWT_SECRET_KEY;
+console.log("JWT_SECRET_KEY:", secretKey);
 
 export function createUser(email, password) {
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-  console.log("DB URL:", process.env.DATABASE_URL);
   if (user) {
     throw new Error("User creation failed, invalid credentials");
   }
