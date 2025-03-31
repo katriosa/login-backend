@@ -17,8 +17,14 @@ app.post("/signup", async (req, res) => {
       return res.status(400).send({ error: "Invalid email or password" });
     }
 
-    const token = createUser(email, password);
-    res.status(201).send({ message: "User created successfully", token });
+    const { token, id } = createUser(email, password);
+
+    res
+      .status(201)
+      .send({
+        message: "User created successfully",
+        user: { token, id, email },
+      });
   } catch (error) {
     res
       .status(400)

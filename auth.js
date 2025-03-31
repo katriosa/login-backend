@@ -10,16 +10,20 @@ export function createUser(email, password) {
     throw new Error("User creation failed, invalid credentials");
   }
 
+  const id = Math.random().toString() + email;
+
   const hashedPassword = bcrypt.hashSync(password, 12);
 
   const result = db
-    .prepare("INSERT INTO users (email, password) VALUES (?, ?)")
-    .run(email, hashedPassword);
+    .prepare("INSERT INTO users (email, password, id) VALUES (?, ?, ?)")
+    .run(email, hashedPassword, id);
 
   const token = jwt.sign({ id: result.lastInsertRowid }, secretKey, {
     expiresIn: "1h",
   });
-  return token;
+
+  const newUser = { token, id };
+  return newUser;
 }
 export function login(email, password) {
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
