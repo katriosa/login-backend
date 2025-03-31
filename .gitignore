@@ -4,5 +4,7 @@ dist-ssr
 *.local
 .env
 
-.db
+app.db
+app.db-shm
+app.db-wal
 tests
