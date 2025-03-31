@@ -8,7 +8,6 @@ app.use(express.json());
 app.post("/signup", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Received data:", req.body);
     if (
       !email ||
       !email.includes("@") ||
@@ -21,7 +20,6 @@ app.post("/signup", async (req, res) => {
     const token = createUser(email, password);
     res.status(201).send({ message: "User created successfully", token });
   } catch (error) {
-    console.error("Error creating user:", error);
     res
       .status(400)
       .send({ error: "Creating user failed, invalid credentials" });

@@ -2,10 +2,7 @@ import bcrypt from "bcryptjs";
 import db from "./db.js";
 import jwt from "jsonwebtoken";
 
-console.log("JWT_SECRET_KEY from process.env:", process.env.JWT_SECRET_KEY);
-
 const secretKey = process.env.JWT_SECRET_KEY;
-console.log("JWT_SECRET_KEY:", secretKey);
 
 export function createUser(email, password) {
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
