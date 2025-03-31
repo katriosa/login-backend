@@ -5,6 +5,13 @@ const app = express();
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
 app.post("/signup", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -18,13 +25,14 @@ app.post("/signup", async (req, res) => {
     }
 
     const { token, id } = createUser(email, password);
+    console.log("Generated ID:", id, typeof id);
 
     res.status(201).send({
       message: "User created successfully",
       user: { token, id, email },
     });
   } catch (error) {
-    res.status(400).send({ error: `${error.message}` });
+    res.status(400).send({ error: `Server: ${error.message}` });
   }
 });
 

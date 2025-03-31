@@ -18,7 +18,7 @@ export function createUser(email, password) {
     .prepare("INSERT INTO users (email, password, id) VALUES (?, ?, ?)")
     .run(email, hashedPassword, id);
 
-  const token = jwt.sign({ id: result.lastInsertRowid }, secretKey, {
+  const token = jwt.sign({ id }, secretKey, {
     expiresIn: "1h",
   });
 
