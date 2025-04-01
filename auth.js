@@ -41,5 +41,5 @@ export function login(email, password) {
   const token = jwt.sign({ id: user.id }, secretKey, {
     expiresIn: "1h",
   });
-  return token;
+  return { token, id: user.id };
 }
