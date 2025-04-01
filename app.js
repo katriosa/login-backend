@@ -33,7 +33,7 @@ app.post("/signup", async (req, res) => {
       user: { token, id, email },
     });
   } catch (error) {
-    res.status(400).send({ error: `Server: ${error.message}` });
+    res.status(400).send({ error: `Signup failed: ${error.message}` });
   }
 });
 
@@ -46,9 +46,9 @@ app.post("/login", async (req, res) => {
     res.status(200).send({ message: "Login successful", user: { token, id } });
   } catch (error) {
     if (error.status === 400) {
-      return res.status(400).send({ error: error.message });
+      return res.status(400).send({ error: `Login failed: ${error.message}` });
     }
-    res.status(500).send({ error: "Login failed, invalid credentials" });
+    res.status(500).send({ error: `Login failed: ${error.message}` });
   }
 });
 
