@@ -3,8 +3,8 @@ import db from "./db.js";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
-const secretAccess = process.env.ACCESS_SECRET;
-const secretRefresh = process.env.REFRESH_SECRET;
+const secretAccessKey = process.env.ACCESS_SECRET_KEY;
+const secretRefreshKey = process.env.REFRESH_SECRET_KEY;
 
 export function createUser(email, password) {
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
@@ -25,10 +25,10 @@ export function createUser(email, password) {
     throw new Error("Database insert error:", error);
   }
 
-  const accessToken = jwt.sign({ id }, secretAccess, {
+  const accessToken = jwt.sign({ id }, secretAccessKey, {
     expiresIn: "15m",
   });
-  const refreshToken = jwt.sign({ id }, secretRefresh, {
+  const refreshToken = jwt.sign({ id }, secretRefreshKey, {
     expiresIn: "7d",
   });
 
@@ -42,15 +42,15 @@ export function login(email, password) {
     error.status = 400;
     throw error;
   }
-  const token = jwt.sign({ id: user.id }, secretKey, {
-    expiresIn: "1h",
+  const accessToken = jwt.sign({ id }, secretAccessKey, {
+    expiresIn: "15m",
   });
-  return { token, id: user.id };
+  return { accessToken, id: user.id };
 }
 
 export function getNewAccessToken(token) {
-  const decoded = jwt.verify(token, secretRefresh);
-  const newAccessToken = jwt.sign({ id: decoded.id }, secretAccess, {
+  const decoded = jwt.verify(token, secretRefreshKey);
+  const newAccessToken = jwt.sign({ id: decoded.id }, secretAccessKey, {
     expiresIn: "15m",
   });
   return newAccessToken;

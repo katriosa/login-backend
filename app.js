@@ -41,9 +41,11 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const { token, id } = login(email, password);
+    const { accessToken, id } = login(email, password);
 
-    res.status(200).send({ message: "Login successful", user: { token, id } });
+    res
+      .status(200)
+      .send({ message: "Login successful", user: { accessToken, id } });
   } catch (error) {
     if (error.status === 400) {
       return res.status(400).send({ error: `Login failed: ${error.message}` });
