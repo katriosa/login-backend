@@ -42,7 +42,7 @@ export function login(email, password) {
     error.status = 400;
     throw error;
   }
-  const accessToken = jwt.sign({ id }, secretAccessKey, {
+  const accessToken = jwt.sign({ id: user.id }, secretAccessKey, {
     expiresIn: "15m",
   });
   return { accessToken, id: user.id };
