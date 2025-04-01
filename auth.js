@@ -21,16 +21,14 @@ export function createUser(email, password) {
     );
     stmt.run(email, hashedPassword, id);
   } catch (error) {
-    console.error("Database insert error:", error);
-    throw new Error("Failed to create user");
+    throw new Error("Database insert error:", error);
   }
 
   const token = jwt.sign({ id }, secretKey, {
     expiresIn: "1h",
   });
 
-  const newUser = { token, id };
-  return newUser;
+  return { token, id };
 }
 export function login(email, password) {
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);

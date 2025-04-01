@@ -27,7 +27,6 @@ app.post("/signup", async (req, res) => {
     }
 
     const { token, id } = createUser(email, password);
-    console.log("Generated ID:", id, typeof id);
 
     res.status(201).send({
       message: "User created successfully",
