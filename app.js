@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { createUser, login } from "./auth.js";
+import { createUser, login, getNewAccessToken } from "./auth.js";
 
 const app = express();
 
@@ -26,11 +26,11 @@ app.post("/signup", async (req, res) => {
       return res.status(400).send({ error: "Invalid email or password" });
     }
 
-    const { token, id } = createUser(email, password);
+    const { accessToken, refreshToken, id } = createUser(email, password);
 
     res.status(201).send({
       message: "User created successfully",
-      user: { token, id, email },
+      user: { accessToken, refreshToken, id, email },
     });
   } catch (error) {
     res.status(400).send({ error: `Signup failed: ${error.message}` });
@@ -49,6 +49,21 @@ app.post("/login", async (req, res) => {
       return res.status(400).send({ error: `Login failed: ${error.message}` });
     }
     res.status(500).send({ error: `Login failed: ${error.message}` });
+  }
+});
+
+app.post("/refresh", (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).send({ error: "Refresh token required" });
+  }
+
+  try {
+    const newAccessToken = getNewAccessToken(refreshToken);
+    res.send({ accessToken: newAccessToken });
+  } catch (error) {
+    res.status(403).send({ error: "Invalid refresh token" });
   }
 });
 

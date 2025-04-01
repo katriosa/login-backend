@@ -3,7 +3,8 @@ import db from "./db.js";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
-const secretKey = process.env.JWT_SECRET_KEY;
+const secretAccess = process.env.ACCESS_SECRET;
+const secretRefresh = process.env.REFRESH_SECRET;
 
 export function createUser(email, password) {
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
@@ -24,17 +25,20 @@ export function createUser(email, password) {
     throw new Error("Database insert error:", error);
   }
 
-  const token = jwt.sign({ id }, secretKey, {
-    expiresIn: "1h",
+  const accessToken = jwt.sign({ id }, secretAccess, {
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign({ id }, secretRefresh, {
+    expiresIn: "7d",
   });
 
-  return { token, id };
+  return { accessToken, refreshToken, id };
 }
 export function login(email, password) {
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
 
   if (!user || !bcrypt.compareSync(password, user.password)) {
-    const error = new Error("User creation failed, invalid credentials");
+    const error = new Error("Login failed, invalid credentials");
     error.status = 400;
     throw error;
   }
@@ -42,4 +46,12 @@ export function login(email, password) {
     expiresIn: "1h",
   });
   return { token, id: user.id };
+}
+
+export function getNewAccessToken(token) {
+  const decoded = jwt.verify(token, secretRefresh);
+  const newAccessToken = jwt.sign({ id: decoded.id }, secretAccess, {
+    expiresIn: "15m",
+  });
+  return newAccessToken;
 }
