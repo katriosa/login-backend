@@ -1,22 +1,29 @@
 import bcrypt from "bcryptjs";
 import db from "./db.js";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
 export function createUser(email, password) {
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
   if (user) {
-    throw new Error("User creation failed, invalid credentials");
+    throw new Error(`User with email "${email}" already exists`);
   }
 
-  const id = Math.random().toString() + email;
+  const id = uuidv4();
 
   const hashedPassword = bcrypt.hashSync(password, 12);
 
-  const result = db
-    .prepare("INSERT INTO users (email, password, id) VALUES (?, ?, ?)")
-    .run(email, hashedPassword, id);
+  try {
+    const stmt = db.prepare(
+      "INSERT INTO users (email, password, id) VALUES (?, ?, ?)"
+    );
+    stmt.run(email, hashedPassword, id);
+  } catch (error) {
+    console.error("Database insert error:", error);
+    throw new Error("Failed to create user");
+  }
 
   const token = jwt.sign({ id }, secretKey, {
     expiresIn: "1h",
