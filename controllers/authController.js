@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import db from "./db.js";
+import db from "../db.js";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 

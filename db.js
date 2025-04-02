@@ -12,4 +12,14 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS user_files (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    filename TEXT NOT NULL,
+    path TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
+
 export default db;
