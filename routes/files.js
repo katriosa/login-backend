@@ -30,22 +30,23 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.post("/upload", upload.single("file"), (req, res) => {
-  console.log("req.body", req.body);
+  console.log("req.file", req.file);
   const { userId } = req.body;
   if (!req.file || !userId) {
     return res.status(400).json({ error: "File and user ID required" });
   }
 
-  const { filename, path: filePath } = req.file;
+  const { filename } = req.file;
+  const fileUrl = `/uploads/${filename}`;
   const id = uuidv4();
 
   try {
     const stmt = db.prepare(
       "INSERT INTO user_files (id, user_id, filename, path) VALUES (?, ?, ?, ?)"
     );
-    stmt.run(id, userId, filename, filePath);
+    stmt.run(id, userId, filename, fileUrl);
 
-    res.json({ message: "File uploaded", id, filename });
+    res.json({ message: "File uploaded", filename, url: fileUrl });
   } catch (error) {
     console.error("Database insert error:", error);
     res.status(500).json({ error: "Failed to save file" });
