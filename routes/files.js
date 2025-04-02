@@ -54,7 +54,11 @@ router.post("/upload", upload.single("file"), (req, res) => {
     );
     stmt.run(id, userId, filename, fileUrl);
 
-    res.json({ message: "File uploaded", filename, url: fileUrl });
+    res.json({
+      message: "File uploaded",
+      filename,
+      url: `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`,
+    });
   } catch (error) {
     console.error("Database insert error:", error);
     res.status(500).json({ error: "Failed to save file" });
