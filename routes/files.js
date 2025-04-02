@@ -5,6 +5,7 @@ import db from "../db.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import fs from "fs";
 
 const router = express.Router();
 
@@ -12,6 +13,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const uploadDir = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -25,6 +30,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.post("/upload", upload.single("file"), (req, res) => {
+  console.log("req.body", req.body);
   const { userId } = req.body;
   if (!req.file || !userId) {
     return res.status(400).json({ error: "File and user ID required" });
