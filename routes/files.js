@@ -31,6 +31,13 @@ const upload = multer({ storage });
 
 router.post("/upload", upload.single("file"), (req, res) => {
   console.log("req.file", req.file);
+
+  if (req.file) {
+    console.log("Файл сохранен по пути:", req.file.path);
+  } else {
+    console.log("Файл не был загружен.");
+  }
+
   const { userId } = req.body;
   console.log("userId", userId);
   if (!req.file || !userId) {
