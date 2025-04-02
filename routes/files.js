@@ -32,6 +32,7 @@ const upload = multer({ storage });
 router.post("/upload", upload.single("file"), (req, res) => {
   console.log("req.file", req.file);
   const { userId } = req.body;
+  console.log("userId", userId);
   if (!req.file || !userId) {
     return res.status(400).json({ error: "File and user ID required" });
   }

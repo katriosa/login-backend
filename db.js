@@ -3,6 +3,7 @@ import sqldb from "better-sqlite3";
 const db = sqldb("app.db");
 
 db.pragma("journal_mode = WAL");
+db.pragma("foreign_keys = ON");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
